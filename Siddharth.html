@@ -1,0 +1,835 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>🎉 Special Birthday Surprise! 🎉</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Pacifico&family=Poppins:wght@400;600;700&display=swap');
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+            touch-action: manipulation;
+        }
+
+        body {
+            overflow: hidden;
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 25%, #ff6b6b 50%, #ffd93d 75%, #1e3c72 100%);
+            min-height: 100vh;
+        }
+
+        /* Gift Box Styles */
+        .gift-container {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 100;
+            cursor: pointer;
+            transition: all 0.5s ease;
+        }
+
+        .gift-box {
+            position: relative;
+            width: 200px;
+            height: 200px;
+            animation: giftShake 0.5s ease-in-out infinite, giftGlow 2s ease-in-out infinite;
+        }
+
+        @keyframes giftShake {
+            0%, 100% { transform: translateX(0) rotate(0deg); }
+            25% { transform: translateX(-5px) rotate(-2deg); }
+            75% { transform: translateX(5px) rotate(2deg); }
+        }
+
+        @keyframes giftGlow {
+            0%, 100% { filter: drop-shadow(0 0 20px rgba(255, 217, 61, 0.8)); }
+            50% { filter: drop-shadow(0 0 40px rgba(255, 217, 61, 1)); }
+        }
+
+        .gift-body {
+            position: absolute;
+            bottom: 0;
+            width: 100%;
+            height: 70%;
+            background: linear-gradient(135deg, #ff5252, #d32f2f);
+            border-radius: 10px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+        }
+
+        .gift-ribbon-vertical {
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 30px;
+            height: 100%;
+            background: linear-gradient(135deg, #ffd93d, #ffed4a);
+        }
+
+        .gift-ribbon-horizontal {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 100%;
+            height: 30px;
+            background: linear-gradient(135deg, #ffd93d, #ffed4a);
+        }
+
+        .gift-lid {
+            position: absolute;
+            top: 0;
+            left: -10px;
+            width: calc(100% + 20px);
+            height: 35%;
+            background: linear-gradient(135deg, #ff6b6b, #ff5252);
+            border-radius: 10px 10px 0 0;
+            box-shadow: 0 -5px 20px rgba(0, 0, 0, 0.2);
+        }
+
+        .gift-lid-ribbon {
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 30px;
+            height: 100%;
+            background: linear-gradient(135deg, #ffd93d, #ffed4a);
+        }
+
+        .gift-bow {
+            position: absolute;
+            top: -30px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 60px;
+            animation: bowBounce 1s ease-in-out infinite;
+        }
+
+        @keyframes bowBounce {
+            0%, 100% { transform: translateX(-50%) translateY(0); }
+            50% { transform: translateX(-50%) translateY(-10px); }
+        }
+
+        .gift-message {
+            position: absolute;
+            bottom: -80px;
+            left: 50%;
+            transform: translateX(-50%);
+            white-space: nowrap;
+            font-family: 'Pacifico', cursive;
+            font-size: 1.2rem;
+            color: white;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+            animation: messagePulse 2s ease-in-out infinite;
+        }
+
+        @keyframes messagePulse {
+            0%, 100% { opacity: 1; transform: translateX(-50%) scale(1); }
+            50% { opacity: 0.8; transform: translateX(-50%) scale(1.05); }
+        }
+
+        .sparkle {
+            position: absolute;
+            width: 10px;
+            height: 10px;
+            background: radial-gradient(circle, #fff, #ffd93d);
+            border-radius: 50%;
+            animation: sparkleFloat 2s ease-in-out infinite;
+        }
+
+        @keyframes sparkleFloat {
+            0%, 100% { transform: translateY(0) scale(1); opacity: 1; }
+            50% { transform: translateY(-20px) scale(1.5); opacity: 0.5; }
+        }
+
+        /* Explosion Animation */
+        .gift-container.explode {
+            animation: giftExplode 0.8s ease-out forwards;
+        }
+
+        @keyframes giftExplode {
+            0% { transform: translate(-50%, -50%) scale(1); opacity: 1; }
+            50% { transform: translate(-50%, -50%) scale(2); opacity: 0.5; }
+            100% { transform: translate(-50%, -50%) scale(3); opacity: 0; }
+        }
+
+        /* Canvas Layers */
+        .canvas-layer {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+        }
+
+        #confetti-canvas { z-index: 50; }
+        #fireworks-canvas { z-index: 40; }
+        #particles-canvas { z-index: 30; }
+        #balloons-canvas { z-index: 20; }
+
+        /* Helicopter Styles */
+        .helicopter-container {
+            position: fixed;
+            z-index: 60;
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        .helicopter {
+            position: relative;
+            animation: helicopterFly 15s linear infinite;
+        }
+
+        @keyframes helicopterFly {
+            0% { transform: translateX(-300px) translateY(0); }
+            25% { transform: translateX(25vw) translateY(-30px); }
+            50% { transform: translateX(50vw) translateY(0); }
+            75% { transform: translateX(75vw) translateY(-30px); }
+            100% { transform: translateX(calc(100vw + 300px)) translateY(0); }
+        }
+
+        .helicopter-body {
+            width: 80px;
+            height: 40px;
+            background: linear-gradient(135deg, #2a5298, #1e3c72);
+            border-radius: 20px 40px 20px 20px;
+            position: relative;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+        }
+
+        .helicopter-window {
+            position: absolute;
+            top: 5px;
+            right: 15px;
+            width: 25px;
+            height: 20px;
+            background: linear-gradient(135deg, #ffd93d, #ffed4a);
+            border-radius: 50%;
+            border: 2px solid #333;
+        }
+
+        .helicopter-tail {
+            position: absolute;
+            left: -40px;
+            top: 15px;
+            width: 50px;
+            height: 10px;
+            background: linear-gradient(135deg, #2a5298, #1e3c72);
+            border-radius: 5px;
+        }
+
+        .helicopter-rotor {
+            position: absolute;
+            top: -15px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 120px;
+            height: 8px;
+            background: linear-gradient(135deg, #ff5252, #d32f2f);
+            border-radius: 4px;
+            animation: rotorSpin 0.1s linear infinite;
+        }
+
+        @keyframes rotorSpin {
+            from { transform: translateX(-50%) rotate(0deg); }
+            to { transform: translateX(-50%) rotate(360deg); }
+        }
+
+        .helicopter-tail-rotor {
+            position: absolute;
+            left: -45px;
+            top: 10px;
+            width: 8px;
+            height: 20px;
+            background: linear-gradient(135deg, #333, #555);
+            border-radius: 4px;
+            animation: tailRotorSpin 0.1s linear infinite;
+        }
+
+        @keyframes tailRotorSpin {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        .helicopter-landing {
+            position: absolute;
+            bottom: -10px;
+            left: 10px;
+            width: 60px;
+            height: 5px;
+            background: #333;
+            border-radius: 2px;
+        }
+
+        /* Banner Styles */
+        .banner-container {
+            position: fixed;
+            top: 30%;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 70;
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        .banner {
+            background: linear-gradient(135deg, #ffd93d, #ffed4a);
+            padding: 20px 40px;
+            border-radius: 10px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            animation: bannerWave 3s ease-in-out infinite;
+            max-width: 90vw;
+        }
+
+        @keyframes bannerWave {
+            0%, 100% { transform: rotate(-2deg) translateY(0); }
+            50% { transform: rotate(2deg) translateY(-10px); }
+        }
+
+        .banner-text {
+            font-family: 'Pacifico', cursive;
+            font-size: 1.5rem;
+            color: #333;
+            text-align: center;
+            line-height: 1.6;
+            text-shadow: 1px 1px 2px rgba(255, 255, 255, 0.5);
+        }
+
+        .banner-flags {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 100px;
+            height: 3px;
+            background: linear-gradient(90deg, transparent, #ff5252, transparent);
+        }
+
+        .banner-flags.left { left: -100px; }
+        .banner-flags.right { right: -100px; }
+
+        /* Birthday Message */
+        .birthday-message {
+            position: fixed;
+            top: 15%;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 80;
+            opacity: 0;
+            text-align: center;
+            pointer-events: none;
+        }
+
+        .birthday-message.show {
+            animation: messageFadeIn 2s ease-out forwards;
+        }
+
+        @keyframes messageFadeIn {
+            0% { opacity: 0; transform: translateX(-50%) translateY(-50px); }
+            100% { opacity: 1; transform: translateX(-50%) translateY(0); }
+        }
+
+        .main-title {
+            font-family: 'Pacifico', cursive;
+            font-size: 3rem;
+            color: white;
+            text-shadow: 3px 3px 6px rgba(0, 0, 0, 0.5), 0 0 30px rgba(255, 215, 0, 0.8);
+            animation: titleGlow 2s ease-in-out infinite;
+        }
+
+        @keyframes titleGlow {
+            0%, 100% { text-shadow: 3px 3px 6px rgba(0, 0, 0, 0.5), 0 0 30px rgba(255, 217, 61, 0.8); }
+            50% { text-shadow: 3px 3px 6px rgba(0, 0, 0, 0.5), 0 0 50px rgba(255, 217, 61, 1); }
+        }
+
+        .subtitle {
+            font-size: 1.2rem;
+            color: #ffd93d;
+            margin-top: 20px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .gift-box { width: 150px; height: 150px; }
+            .gift-message { font-size: 0.9rem; bottom: -60px; }
+            .helicopter-body { width: 60px; height: 30px; }
+            .helicopter-rotor { width: 90px; }
+            .main-title { font-size: 2rem; }
+            .banner-text { font-size: 1rem; }
+            .banner { padding: 15px 25px; }
+        }
+
+        /* Floating elements */
+        .floating-star {
+            position: fixed;
+            font-size: 2rem;
+            animation: starFloat 4s ease-in-out infinite;
+            z-index: 25;
+            opacity: 0;
+        }
+
+        @keyframes starFloat {
+            0%, 100% { transform: translateY(0) rotate(0deg); }
+            50% { transform: translateY(-30px) rotate(180deg); }
+        }
+    </style>
+</head>
+<body>
+    <!-- Sparkles around gift box -->
+    <div id="sparkles-container"></div>
+
+    <!-- Gift Box -->
+    <div class="gift-container" id="gift-container">
+        <div class="gift-box" id="gift-box">
+            <div class="gift-bow">🎀</div>
+            <div class="gift-lid">
+                <div class="gift-lid-ribbon"></div>
+            </div>
+            <div class="gift-body">
+                <div class="gift-ribbon-vertical"></div>
+                <div class="gift-ribbon-horizontal"></div>
+            </div>
+        </div>
+        <div class="gift-message">
+            Today is the birthday of a special person,<br>
+            so I'm sending you some special wishes!
+        </div>
+    </div>
+
+    <!-- Canvas Layers -->
+    <canvas class="canvas-layer" id="confetti-canvas"></canvas>
+    <canvas class="canvas-layer" id="fireworks-canvas"></canvas>
+    <canvas class="canvas-layer" id="particles-canvas"></canvas>
+    <canvas class="canvas-layer" id="balloons-canvas"></canvas>
+
+    <!-- Helicopters -->
+    <div class="helicopter-container" id="helicopter1" style="top: 25%;">
+        <div class="helicopter">
+            <div class="helicopter-rotor"></div>
+            <div class="helicopter-body">
+                <div class="helicopter-window"></div>
+            </div>
+            <div class="helicopter-tail"></div>
+            <div class="helicopter-tail-rotor"></div>
+            <div class="helicopter-landing"></div>
+        </div>
+    </div>
+
+    <div class="helicopter-container" id="helicopter2" style="top: 35%;">
+        <div class="helicopter" style="animation-delay: 7.5s;">
+            <div class="helicopter-rotor"></div>
+            <div class="helicopter-body">
+                <div class="helicopter-window"></div>
+            </div>
+            <div class="helicopter-tail"></div>
+            <div class="helicopter-tail-rotor"></div>
+            <div class="helicopter-landing"></div>
+        </div>
+    </div>
+
+    <!-- Banner -->
+    <div class="banner-container" id="banner-container">
+        <div class="banner">
+            <div class="banner-flags left"></div>
+            <div class="banner-text">
+                🎉 Happy Birthday Siddharth! 🎉<br>
+                Wishing you a wonderful day filled with joy, laughter,<br>
+                and great memories, plus a bright year ahead! 🌟
+            </div>
+            <div class="banner-flags right"></div>
+        </div>
+    </div>
+
+    <!-- Birthday Message -->
+    <div class="birthday-message" id="birthday-message">
+        <div class="main-title">🎂 Happy Birthday! 🎂</div>
+        <div class="subtitle">Make a wish and enjoy your special day! ✨</div>
+    </div>
+
+    <script>
+        // Initialize
+        const giftContainer = document.getElementById('gift-container');
+        const giftBox = document.getElementById('gift-box');
+        const helicopter1 = document.getElementById('helicopter1');
+        const helicopter2 = document.getElementById('helicopter2');
+        const bannerContainer = document.getElementById('banner-container');
+        const birthdayMessage = document.getElementById('birthday-message');
+        const sparklesContainer = document.getElementById('sparkles-container');
+
+        // Create sparkles around gift box
+        function createSparkles() {
+            for (let i = 0; i < 12; i++) {
+                const sparkle = document.createElement('div');
+                sparkle.className = 'sparkle';
+                const angle = (i / 12) * Math.PI * 2;
+                const radius = 120;
+                sparkle.style.left = `calc(50% + ${Math.cos(angle) * radius}px)`;
+                sparkle.style.top = `calc(50% + ${Math.sin(angle) * radius}px)`;
+                sparkle.style.animationDelay = `${i * 0.2}s`;
+                sparklesContainer.appendChild(sparkle);
+            }
+        }
+        createSparkles();
+
+        // Canvas setup
+        const confettiCanvas = document.getElementById('confetti-canvas');
+        const fireworksCanvas = document.getElementById('fireworks-canvas');
+        const particlesCanvas = document.getElementById('particles-canvas');
+        const balloonsCanvas = document.getElementById('balloons-canvas');
+
+        const confettiCtx = confettiCanvas.getContext('2d');
+        const fireworksCtx = fireworksCanvas.getContext('2d');
+        const particlesCtx = particlesCanvas.getContext('2d');
+        const balloonsCtx = balloonsCanvas.getContext('2d');
+
+        function resizeCanvases() {
+            [confettiCanvas, fireworksCanvas, particlesCanvas, balloonsCanvas].forEach(canvas => {
+                canvas.width = window.innerWidth;
+                canvas.height = window.innerHeight;
+            });
+        }
+        resizeCanvases();
+        window.addEventListener('resize', resizeCanvases);
+
+        // Colors - Yellow, shades of blue, and red
+        const colors = [
+            '#ffd93d', '#ffed4a', '#fff59d', '#ffe082', '#ffb74d', // Yellow shades
+            '#1e3c72', '#2a5298', '#3498db', '#2980b9', '#5dade2', '#85c1e9', '#1e88e5', '#1976d2', // Blue shades
+            '#ff6b6b', '#ee5a5a', '#ff8787', '#ff5252', '#e53935', '#d32f2f', '#c62828', '#b71c1c' // Red shades
+        ];
+
+        // Confetti System
+        let confetti = [];
+        class Confetti {
+            constructor(x, y) {
+                this.x = x || window.innerWidth / 2;
+                this.y = y || window.innerHeight / 2;
+                this.size = Math.random() * 10 + 5;
+                this.speedX = (Math.random() - 0.5) * 20;
+                this.speedY = (Math.random() - 0.5) * 20 - 10;
+                this.color = colors[Math.floor(Math.random() * colors.length)];
+                this.rotation = Math.random() * Math.PI * 2;
+                this.rotationSpeed = (Math.random() - 0.5) * 0.3;
+                this.gravity = 0.3;
+                this.friction = 0.99;
+            }
+
+            update() {
+                this.x += this.speedX;
+                this.y += this.speedY;
+                this.speedY += this.gravity;
+                this.speedX *= this.friction;
+                this.rotation += this.rotationSpeed;
+            }
+
+            draw() {
+                confettiCtx.save();
+                confettiCtx.translate(this.x, this.y);
+                confettiCtx.rotate(this.rotation);
+                confettiCtx.fillStyle = this.color;
+                confettiCtx.fillRect(-this.size / 2, -this.size / 2, this.size, this.size);
+                confettiCtx.restore();
+            }
+        }
+
+        // Fireworks System
+        let fireworks = [];
+        class Firework {
+            constructor(x, y) {
+                this.x = x || Math.random() * window.innerWidth;
+                this.y = y || window.innerHeight;
+                this.targetY = Math.random() * (window.innerHeight * 0.5);
+                this.speed = Math.random() * 3 + 5;
+                this.particles = [];
+                this.exploded = false;
+                this.color = colors[Math.floor(Math.random() * colors.length)];
+            }
+
+            update() {
+                if (!this.exploded) {
+                    this.y -= this.speed;
+                    if (this.y <= this.targetY) {
+                        this.explode();
+                    }
+                }
+                this.particles = this.particles.filter(p => p.opacity > 0);
+                this.particles.forEach(p => p.update());
+            }
+
+            explode() {
+                this.exploded = true;
+                for (let i = 0; i < 100; i++) {
+                    this.particles.push(new Particle(this.x, this.y, this.color));
+                }
+            }
+
+            draw() {
+                if (!this.exploded) {
+                    fireworksCtx.beginPath();
+                    fireworksCtx.arc(this.x, this.y, 3, 0, Math.PI * 2);
+                    fireworksCtx.fillStyle = this.color;
+                    fireworksCtx.fill();
+                }
+                this.particles.forEach(p => p.draw());
+            }
+        }
+
+        class Particle {
+            constructor(x, y, color) {
+                this.x = x;
+                this.y = y;
+                this.size = Math.random() * 4 + 2;
+                this.speedX = (Math.random() - 0.5) * 10;
+                this.speedY = (Math.random() - 0.5) * 10;
+                this.color = color;
+                this.opacity = 1;
+                this.decay = Math.random() * 0.02 + 0.01;
+                this.gravity = 0.1;
+            }
+
+            update() {
+                this.x += this.speedX;
+                this.y += this.speedY;
+                this.speedY += this.gravity;
+                this.opacity -= this.decay;
+            }
+
+            draw() {
+                fireworksCtx.save();
+                fireworksCtx.globalAlpha = this.opacity;
+                fireworksCtx.beginPath();
+                fireworksCtx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                fireworksCtx.fillStyle = this.color;
+                fireworksCtx.fill();
+                fireworksCtx.restore();
+            }
+        }
+
+        // Magical Particles
+        let magicalParticles = [];
+        class MagicalParticle {
+            constructor() {
+                this.reset();
+            }
+
+            reset() {
+                this.x = Math.random() * window.innerWidth;
+                this.y = window.innerHeight + 10;
+                this.size = Math.random() * 5 + 2;
+                this.speedY = Math.random() * 2 + 1;
+                this.speedX = (Math.random() - 0.5) * 1;
+                this.color = colors[Math.floor(Math.random() * colors.length)];
+                this.opacity = Math.random() * 0.5 + 0.5;
+                this.twinkle = Math.random() * 0.1 + 0.05;
+            }
+
+            update() {
+                this.y -= this.speedY;
+                this.x += this.speedX;
+                this.opacity += this.twinkle;
+                if (this.opacity > 1 || this.opacity < 0.3) {
+                    this.twinkle *= -1;
+                }
+                if (this.y < -10) {
+                    this.reset();
+                }
+            }
+
+            draw() {
+                particlesCtx.save();
+                particlesCtx.globalAlpha = this.opacity;
+                particlesCtx.beginPath();
+                particlesCtx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                particlesCtx.fillStyle = this.color;
+                particlesCtx.shadowBlur = 10;
+                particlesCtx.shadowColor = this.color;
+                particlesCtx.fill();
+                particlesCtx.restore();
+            }
+        }
+
+        // Balloons
+        let balloons = [];
+        class Balloon {
+            constructor() {
+                this.reset();
+            }
+
+            reset() {
+                this.x = Math.random() * window.innerWidth;
+                this.y = window.innerHeight + 50;
+                this.size = Math.random() * 30 + 30;
+                this.speedY = Math.random() * 2 + 1;
+                this.speedX = (Math.random() - 0.5) * 0.5;
+                this.color = colors[Math.floor(Math.random() * colors.length)];
+                this.wobble = Math.random() * Math.PI * 2;
+                this.wobbleSpeed = Math.random() * 0.05 + 0.02;
+            }
+
+            update() {
+                this.y -= this.speedY;
+                this.wobble += this.wobbleSpeed;
+                this.x += Math.sin(this.wobble) * 2 + this.speedX;
+                if (this.y < -50) {
+                    this.reset();
+                }
+            }
+
+            draw() {
+                balloonsCtx.save();
+                balloonsCtx.translate(this.x, this.y);
+                
+                // Balloon body
+                balloonsCtx.beginPath();
+                balloonsCtx.ellipse(0, 0, this.size * 0.8, this.size, 0, 0, Math.PI * 2);
+                balloonsCtx.fillStyle = this.color;
+                balloonsCtx.fill();
+                
+                // Balloon shine
+                balloonsCtx.beginPath();
+                balloonsCtx.ellipse(-this.size * 0.3, -this.size * 0.3, this.size * 0.2, this.size * 0.3, -0.5, 0, Math.PI * 2);
+                balloonsCtx.fillStyle = 'rgba(255, 255, 255, 0.3)';
+                balloonsCtx.fill();
+                
+                // String
+                balloonsCtx.beginPath();
+                balloonsCtx.moveTo(0, this.size);
+                balloonsCtx.quadraticCurveTo(5, this.size + 20, 0, this.size + 40);
+                balloonsCtx.strokeStyle = '#333';
+                balloonsCtx.lineWidth = 2;
+                balloonsCtx.stroke();
+                
+                balloonsCtx.restore();
+            }
+        }
+
+        // Initialize particles
+        for (let i = 0; i < 50; i++) {
+            magicalParticles.push(new MagicalParticle());
+        }
+
+        for (let i = 0; i < 15; i++) {
+            balloons.push(new Balloon());
+        }
+
+        // Animation loops
+        let celebrationStarted = false;
+        let fireworkInterval;
+
+        function animateConfetti() {
+            confettiCtx.clearRect(0, 0, confettiCanvas.width, confettiCanvas.height);
+            confetti = confetti.filter(c => c.y < window.innerHeight + 50);
+            confetti.forEach(c => {
+                c.update();
+                c.draw();
+            });
+            requestAnimationFrame(animateConfetti);
+        }
+
+        function animateFireworks() {
+            fireworksCtx.clearRect(0, 0, fireworksCanvas.width, fireworksCanvas.height);
+            fireworks = fireworks.filter(f => !f.exploded || f.particles.length > 0);
+            fireworks.forEach(f => {
+                f.update();
+                f.draw();
+            });
+            requestAnimationFrame(animateFireworks);
+        }
+
+        function animateParticles() {
+            particlesCtx.clearRect(0, 0, particlesCanvas.width, particlesCanvas.height);
+            magicalParticles.forEach(p => {
+                p.update();
+                p.draw();
+            });
+            requestAnimationFrame(animateParticles);
+        }
+
+        function animateBalloons() {
+            balloonsCtx.clearRect(0, 0, balloonsCanvas.width, balloonsCanvas.height);
+            balloons.forEach(b => {
+                b.update();
+                b.draw();
+            });
+            requestAnimationFrame(animateBalloons);
+        }
+
+        // Start background animations
+        animateParticles();
+        animateBalloons();
+
+        // Gift box click handler
+        giftContainer.addEventListener('click', () => {
+            if (celebrationStarted) return;
+            celebrationStarted = true;
+
+            // Explode gift box
+            giftContainer.classList.add('explode');
+
+            // Create massive confetti burst
+            for (let i = 0; i < 200; i++) {
+                confetti.push(new Confetti());
+            }
+
+            // Start confetti animation
+            animateConfetti();
+
+            // Start fireworks
+            animateFireworks();
+            fireworkInterval = setInterval(() => {
+                fireworks.push(new Firework());
+            }, 500);
+
+            // Show helicopters after delay
+            setTimeout(() => {
+                helicopter1.style.opacity = '1';
+                helicopter2.style.opacity = '1';
+            }, 1000);
+
+            // Show banner
+            setTimeout(() => {
+                bannerContainer.style.opacity = '1';
+                bannerContainer.style.animation = 'messageFadeIn 2s ease-out forwards';
+            }, 2000);
+
+            // Show birthday message
+            setTimeout(() => {
+                birthdayMessage.classList.add('show');
+            }, 3000);
+
+            // Continuous confetti
+            setInterval(() => {
+                for (let i = 0; i < 10; i++) {
+                    confetti.push(new Confetti());
+                }
+            }, 200);
+
+            // Create floating stars
+            const starEmojis = ['⭐', '🌟', '✨', '💫', '🎉', '🎊'];
+            for (let i = 0; i < 20; i++) {
+                setTimeout(() => {
+                    const star = document.createElement('div');
+                    star.className = 'floating-star';
+                    star.textContent = starEmojis[Math.floor(Math.random() * starEmojis.length)];
+                    star.style.left = Math.random() * 100 + 'vw';
+                    star.style.top = Math.random() * 100 + 'vh';
+                    star.style.animationDelay = Math.random() * 2 + 's';
+                    star.style.opacity = '1';
+                    document.body.appendChild(star);
+                }, i * 200);
+            }
+        });
+
+        // Touch support
+        giftContainer.addEventListener('touchstart', (e) => {
+            e.preventDefault();
+            giftContainer.click();
+        }, { passive: false });
+    </script>
+</body>
+</html>
